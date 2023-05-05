@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>課程選擇系統</title>
+  </head>
+  <body>
+    {% block body %}
+    <h1>課程選擇系統</h1>
+
+    <h2>已選課列表</h2>
+    <div class="selected-credits">
+      <p>已選學分數：{{ selected_credits }}</p>
+  </div>
+  <div class="waring">
+    <p>狀態：{{ waring }}</p>
+</div>
+    <form method="post" action="{{url_for('Course_Selection')}}">
+      <label for="student_id">學號：</label>
+      <input type="text" id="student_id" name="student_id" value={% if student_id != undefined %} {{student_id}} {% endif %}>
+      <input type="submit" name="search" value="查詢已選課程">
+      <input type="submit" name="search" value="查詢可選課程">
+    </form>
+      {% if course_info != undefined %}
+      <table>
+      <tr>
+        <th>
+          course id
+        </th>
+
+        <th>
+          course name
+        </th>
+
+        <th>
+          department id
+        </th>
+        <th>
+          grade
+        </th>
+        <th>
+          course type
+        </th>
+        <th>
+          mnos
+        </th>
+        <th>
+          cnos
+        </th>
+        <th>
+          cs
+        </th>
+        <th>
+          credit
+        </th>
+      </tr>
+      {%  for i in range(0, len)  %}
+      <form method="post" action="{{url_for('Course_Selection')}}">
+      <tr>
+      <td>
+        <input type = "text" name = "course_id" value = {{course_info['course_id'][i] }} >
+      </td>
+      <td>
+        <input type = "text" name = {{student_id}} value = {{course_info['course_name'][i]}} >
+        
+      </td>
+      <td>
+        {{course_info['department_id'][i] }}
+      </td>
+      <td>
+        {{course_info['grade'][i] }}
+      </td>
+      <td>
+        {{course_info['course_type'][i] }}
+      </td>
+      <td>
+        {{course_info['mnos'][i] }}
+      </td>
+      <td>
+        {{course_info['cnos'][i] }}
+      </td>
+      <td>
+        {{course_info['cs'][i] }}
+      </td>
+      <td>
+        {{course_info['credit'][i] }}
+      </td>
+      <td>
+        <style>
+          .hidden {
+              display: none;
+          }
+      </style> 
+        <input type="submit" name="del" value="退選" {% if search_type != 0 %}class="hidden"{% endif %}>
+        <input type="submit" name="add" value="加選" {% if search_type == 0 %}class="hidden"{% endif %}>
+      </td>
+    </tr>
+    </form>
+    {% endfor %}
+        </table>
+      {% endif %}
+    
+    <ul id="selected_courses">
+      <!-- 已選課程列表 -->
+    </ul>
+
+  
+
+    <script>
+
+    </script>
+    {% endblock %}
+  </body>
+</html>
