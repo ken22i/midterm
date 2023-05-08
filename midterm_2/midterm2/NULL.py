@@ -51,8 +51,8 @@ def Course_Selection():
                 course_data = cursor.fetchone()                                                     #查询了一条记录，其中包含两个字段 course_name 和 course_id，那么cursor.fetchone() 方法将返回一个包含这两个字段值的元组
                 for i, keys in enumerate(course_info.keys()):
                     course_info[keys].append(course_data[i])
-            resp = make_response('Setting a cookie') #原本要設cookie 但不知道為什麼set不起來 如果有set起來del那邊就不用寫的那麼醜了
-            resp.set_cookie('username', student_id)   #暫時無用，也別註解放著就好
+           ## resp = make_response('Setting a cookie') #原本要設cookie 但不知道為什麼set不起來 如果有set起來del那邊就不用寫的那麼醜了
+           ## resp.set_cookie('username', student_id)   #暫時無用，也別註解放著就好
             #計算學分總和
             query = "SELECT SUM(Course.CourseCredit) FROM enrollment INNER JOIN Course ON enrollment.CourseID = Course.CourseID WHERE enrollment.StudentID = '{}';".format(student_id)
             cursor = conn.cursor()   #獲取資料庫的資料
@@ -87,8 +87,8 @@ def Course_Selection():
                 course_data = cursor.fetchone()                                                     #查询了一条记录，其中包含两个字段 course_name 和 course_id，那么cursor.fetchone() 方法将返回一个包含这两个字段值的元组
                 for i, keys in enumerate(course_info.keys()):
                     course_info[keys].append(course_data[i])
-            resp = make_response('Setting a cookie') #原本要設cookie 但不知道為什麼set不起來 如果有set起來del那邊就不用寫的那麼醜了
-            resp.set_cookie('username', student_id)   #暫時無用，也別註解放著就好
+           ## resp = make_response('Setting a cookie') #原本要設cookie 但不知道為什麼set不起來 如果有set起來del那邊就不用寫的那麼醜了
+           ## resp.set_cookie('username', student_id)   #暫時無用，也別註解放著就好
             #計算學分總和
             query = "SELECT SUM(Course.CourseCredit) FROM enrollment INNER JOIN Course ON enrollment.CourseID = Course.CourseID WHERE enrollment.StudentID = '{}';".format(student_id)
             cursor = conn.cursor()   #獲取資料庫的資料
