@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 # -*- coding: UTF-8 -*-
+from codecs import CodecInfo
 from flask import redirect, Flask, make_response, request, render_template, session, Response, url_for
 import MySQLdb
 selected_credits = 0
@@ -56,8 +57,9 @@ def Course_Selection():
             query = "SELECT SUM(Course.CourseCredit) FROM enrollment INNER JOIN Course ON enrollment.CourseID = Course.CourseID WHERE enrollment.StudentID = '{}';".format(student_id)
             cursor = conn.cursor()   #獲取資料庫的資料
             cursor.execute(query)    #查詢語法
-            selected_credits=cursor.fetchone()
-            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0,selected_credits=selected_credits)  #len是計算有幾筆資料
+            selected_credits = cursor.fetchone()
+
+            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0,selected_credits=selected_credits[0])  #len是計算有幾筆資料
         elif request.form['search'] == '查詢可選課程':
             
             student_id = request.form.get("student_id")
@@ -92,7 +94,7 @@ def Course_Selection():
             cursor = conn.cursor()   #獲取資料庫的資料
             cursor.execute(query)    #查詢語法
             selected_credits=cursor.fetchone()
-            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 1,selected_credits=selected_credits)  #len是計算有幾筆資料
+            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 1,selected_credits=selected_credits[0])  #len是計算有幾筆資料
 
             # 與已選課程差不多寫法 只是要加上不要列出來的課程的條件 如已選 衝堂etc
             pass
@@ -105,14 +107,17 @@ def Course_Selection():
         course_status=cursor.fetchone()
 
         if int(selected_credits[0]) > 9 and int(course_status[0])==1:
-            
 
         # 因為cookie不知道為什麼存不下來 所以先用這個暴力寫法 如果存得下來就直接取cookie
             for k in request.form.keys():
                 if "D" in k:
                     student_id = k
             course_id = request.form.get("course_id")  #抓課程ID
-
+        # 找課程名稱
+            query ="SELECT CourseName FROM course WHERE CourseID = '{}';".format(course_id)
+            cursor = conn.cursor()   #獲取資料庫的資料
+            cursor.execute(query)
+            delname = cursor.fetchone()
         # 從資料庫中刪除
             print("DELETE FROM enrollment where CourseID = '{}' AND StudentID = '{}' ;".format(course_id, student_id))
             query = "DELETE FROM enrollment where CourseID = '{}' AND StudentID = '{}' ;".format(course_id, student_id)
@@ -150,14 +155,19 @@ def Course_Selection():
             print(course_info)
             resp = make_response('Setting a cookie') #暫時無用
             resp.set_cookie('username', student_id)  #暫時無用
-            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0)
+            waring = "你已成功退選 "+str(delname[0])
+            query = "SELECT SUM(Course.CourseCredit) FROM enrollment INNER JOIN Course ON enrollment.CourseID = Course.CourseID WHERE enrollment.StudentID = '{}';".format(student_id)
+            cursor = conn.cursor()   #獲取資料庫的資料
+            cursor.execute(query)
+            selected_credits=cursor.fetchone()
+            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0, waring=waring,selected_credits=selected_credits[0])#我試驗
         elif int(course_status[0])==1:
             print(selected_credits)
-            waring="你不能退，低於學分限制"
+            waring = "你不能退，低於學分限制"
             return render_template("Course_Selection.html",waring=waring)
         else:
             print(selected_credits)
-            waring="你不能退，此課為必修"
+            waring ="你不能退，此課為必修"
             return render_template("Course_Selection.html",waring=waring)           
     
     elif 'add' in request.form: #加選 同del寫法
@@ -171,6 +181,11 @@ def Course_Selection():
                     student_id = k
             course_id = request.form.get("course_id")  #抓課程ID
 
+            # 找課程名稱
+            query ="SELECT CourseName FROM course WHERE CourseID = '{}';".format(course_id)
+            cursor = conn.cursor()   #獲取資料庫的資料
+            cursor.execute(query)
+            delname = cursor.fetchone()
             ##不可加選衝堂的課程；
 
             query = "SELECT CS FROM COURSE where CourseID = '{}';".format(course_id)
@@ -252,7 +267,14 @@ def Course_Selection():
             print(course_info)
             resp = make_response('Setting a cookie') #暫時無用
             resp.set_cookie('username', student_id)  #暫時無用
-            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0)
+            waring = "你已成功加選 "+str(delname[0])
+            # cursor = conn.cursor()   #獲取資料庫的資料
+            # cursor.execute(query)
+            # selected_credits=cursor.fetchone()
+            # print("selected_creditsselected_creditsselected_creditsselected_credits",selected_credits)
+            # print("selected_credits0000000000000",selected_credits[0])
+            # return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0, waring=waring,selected_credits=selected_credits[0])
+            return render_template("Course_Selection.html", course_info = course_info, len = len(course_info['cs']), student_id = student_id,search_type = 0, waring=waring)
         else:
             print(selected_credits)
             waring="你不能加"
