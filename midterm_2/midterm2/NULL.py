@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # coding=utf-8
 # -*- coding: UTF-8 -*-
-from codecs import CodecInfo
-from flask import redirect, Flask, make_response, request, render_template, session, Response, url_for
+
+from flask import  Flask, request, render_template
 import MySQLdb
 selected_credits = 0
 app = Flask(__name__)
@@ -153,8 +153,8 @@ def Course_Selection():
                 for i, keys in enumerate(course_info.keys()):
                     course_info[keys].append(course_data[i])
             print(course_info)
-            resp = make_response('Setting a cookie') #暫時無用
-            resp.set_cookie('username', student_id)  #暫時無用
+            ##resp = make_response('Setting a cookie') #暫時無用
+            ##resp.set_cookie('username', student_id)  #暫時無用
             waring = "你已成功退選 "+str(delname[0])
             query = "SELECT SUM(Course.CourseCredit) FROM enrollment INNER JOIN Course ON enrollment.CourseID = Course.CourseID WHERE enrollment.StudentID = '{}';".format(student_id)
             cursor = conn.cursor()   #獲取資料庫的資料
@@ -265,8 +265,8 @@ def Course_Selection():
                 for i, keys in enumerate(course_info.keys()):
                     course_info[keys].append(course_data[i])
             print(course_info)
-            resp = make_response('Setting a cookie') #暫時無用
-            resp.set_cookie('username', student_id)  #暫時無用
+            ##resp = make_response('Setting a cookie') #暫時無用
+            ##resp.set_cookie('username', student_id)  #暫時無用
             waring = "你已成功加選 "+str(delname[0])
             # cursor = conn.cursor()   #獲取資料庫的資料
             # cursor.execute(query)
